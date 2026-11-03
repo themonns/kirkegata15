@@ -415,12 +415,12 @@ html.m .inb.in .ho-tile{opacity:1;transform:none}
 .mc3d{grid-column:1/9;margin:clamp(28px,3vw,40px) 0 0;position:sticky;top:96px}
 .mc3d .f3d{aspect-ratio:6/5;max-height:calc(100svh - 170px);width:100%;border-radius:var(--r);background:var(--stone)}
 .m3tags{position:absolute;inset:0 0 auto 0;pointer-events:none}
-.m3tags>*{position:absolute;left:0;top:0;transform:translate(-50%,-50%);background:var(--paper);color:#1B1C1E;border:0;border-radius:var(--r-s);padding:5px 12px;font:500 13px/1.2 var(--f-body);white-space:nowrap;box-shadow:0 2px 10px rgba(27,28,30,.12);opacity:0;transition:opacity .6s ease,background-color .3s,color .3s} /* taste-skill-ignore: labels pinned on the model */
+.m3tags>*{position:absolute;left:0;top:0;transform:translate(-50%,-50%);background:var(--paper);color:var(--ink);border:0;border-radius:var(--r-s);padding:5px 12px;font:500 13px/1.2 var(--f-body);white-space:nowrap;box-shadow:0 2px 10px rgba(27,28,30,.12);opacity:0;transition:opacity .6s ease,background-color .3s,color .3s} /* taste-skill-ignore: labels pinned on the model */
 .m3tags>.on{opacity:1}
 .m3tags span{opacity:0;color:var(--ink-2)}.m3tags span.on{opacity:.8}
 .m3tags button{pointer-events:auto;cursor:pointer;min-height:30px}
 .m3tags button::after{content:"";position:absolute;inset:-8px}
-.m3tags button:hover,.m3tags button:focus-visible{background:#FFFFFF;outline:2px solid var(--patina);outline-offset:1px}
+.m3tags button:hover,.m3tags button:focus-visible{background:var(--stone-2);outline:2px solid var(--patina);outline-offset:1px}
 .m3tags button.pick{background:var(--patina);color:var(--on-patina)}
 @media (max-width:700px){.m3tags>*{font-size:12px;padding:3px 9px;min-height:26px}}
 /* Booking in the meeting centre, built like a venue finder: what and how many, the rooms that fit as cards with the room drawn
@@ -3404,8 +3404,11 @@ function buildOffer() {
     const scene = new T.Scene(), tgt = new T.Vector3(40, 0, -18);
     const cam = new T.OrthographicCamera(-30, 30, 20, -20, -300, 400), AZ = .5, EL = .66;
     cam.position.set(tgt.x + 140 * Math.cos(EL) * Math.sin(AZ), 140 * Math.sin(EL), tgt.z + 140 * Math.cos(EL) * Math.cos(AZ)); cam.lookAt(tgt);
-    scene.add(new T.HemisphereLight(0xffffff, 0xd8d2c8, 1.3));
-    const sun = new T.DirectionalLight(0xffffff, 1.45); sun.position.set(tgt.x - 30, 70, tgt.z + 35); sun.target.position.copy(tgt);
+    const DK = (() => { const c = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim(); const m = c.match(/^#?([0-9a-f]{6})$/i); if (!m) return false; const n = parseInt(m[1], 16); return (((n >> 16) & 255) * .3 + ((n >> 8) & 255) * .59 + (n & 255) * .11) < 110; })();
+    const PC = DK ? { slab: 0x2E2F32, line: 0xECEAE5, lo: .3, soft: 0x26272A, hatch: 0x3A3B3E, wall: 0x46474B, wood: 0x7E6446, desk: 0x8A877F, seat: 0x2A2A2C, green: 0x5E7A55 }
+      : { slab: 0xF4F1EB, line: 0x1B1C1E, lo: 1, soft: 0xf6f4f0, hatch: 0xDEDAD3, wall: 0xFBFAF7, wood: 0xB08A5A, desk: 0xFFFFFF, seat: 0x55534F, green: 0x7D9A6E };
+    scene.add(new T.HemisphereLight(0xffffff, DK ? 0x55524d : 0xd8d2c8, DK ? 1.05 : 1.3));
+    const sun = new T.DirectionalLight(0xffffff, DK ? 1.1 : 1.45); sun.position.set(tgt.x - 30, 70, tgt.z + 35); sun.target.position.copy(tgt);
     sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -50, right: 50, top: 50, bottom: -50, near: 1, far: 220 }); sun.shadow.bias = -.0004; sun.shadow.radius = 3;
     scene.add(sun, sun.target);
     const V2 = (u, v) => new T.Vector2(u, v);
@@ -3416,7 +3419,7 @@ function buildOffer() {
     // the floor with the atrium open in it
     const fs = new T.Shape(D.geo.F.map(([u, v]) => V2(u, v))); fs.holes.push(new T.Path(D.geo.atr.map(([u, v]) => V2(u, v)).reverse()));
     const slabG = new T.ExtrudeGeometry(fs, { depth: .35, bevelEnabled: false }); slabG.rotateX(-Math.PI / 2); slabG.translate(0, -.35, 0);
-    const slab = new T.Mesh(slabG, new T.MeshStandardMaterial({ color: 0xF4F1EB, roughness: 1, metalness: 0 })); slab.receiveShadow = true; slab.add(lines(slabG, 0x1B1C1E, .55)); scene.add(slab);
+    const slab = new T.Mesh(slabG, new T.MeshStandardMaterial({ color: PC.slab, roughness: 1, metalness: 0 })); slab.receiveShadow = true; slab.add(lines(slabG, PC.line, .55 * PC.lo)); scene.add(slab);
     // the frame fits the floor as seen from this side
     cam.updateMatrixWorld();
     const fit = (() => { const inv = cam.matrixWorldInverse, v = new T.Vector3(); let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
@@ -3459,23 +3462,23 @@ function buildOffer() {
         requestAnimationFrame(fade); }
       group = new T.Group(); scene.add(group); parts = [];
       const mat = (o, op = 1) => { const mt = new T.MeshStandardMaterial({ roughness: .85, metalness: 0, transparent: true, ...o }); mt.userData.op = op; mt.opacity = REDUCE ? op : 0; return mt; };
-      const soft = new T.Color(0xf6f4f0);
+      const soft = new T.Color(PC.soft);
       // the hatched part that is not in the proposal, then the coloured floor areas
       const hatch = (m.hatch || []).map(p => ext(p, .02, .005));
-      if (hatch.length) { const hm = new T.Mesh(merge(hatch), mat({ color: 0xDEDAD3 })); hm.receiveShadow = true; group.add(hm); parts.push({ fadeAt: .05, mt: hm.material }); }
-      const fills = (m.fills || []).map(([p, c]) => paint(ext(p, .03, .01), new T.Color(c).lerp(soft, .1)));
+      if (hatch.length) { const hm = new T.Mesh(merge(hatch), mat({ color: PC.hatch })); hm.receiveShadow = true; group.add(hm); parts.push({ fadeAt: .05, mt: hm.material }); }
+      const fills = (m.fills || []).map(([p, c]) => paint(ext(p, .03, .01), new T.Color(c).lerp(soft, DK ? .5 : .1).multiplyScalar(DK ? .6 : 1)));
       if (fills.length) { const fm = new T.Mesh(merge(fills), mat({ vertexColors: true, roughness: 1 })); fm.receiveShadow = true; group.add(fm); parts.push({ fadeAt: .15, mt: fm.material }); }
       // walls, columns and partitions rise from the floor
       const walls = (m.walls || []).map(p => ext(p, 1.4));
       const parti = (m.lines || []).map(([u0, v0, u1, v1]) => { const L = Math.hypot(u1 - u0, v1 - v0), g = new T.BoxGeometry(L, 1.4, .09); g.translate(0, .7, 0); g.rotateY(-Math.atan2(v1 - v0, u1 - u0)); g.translate((u0 + u1) / 2, 0, -(v0 + v1) / 2); return g; });
-      if (walls.length || parti.length) { const g = merge([...walls, ...parti]), wm = new T.Mesh(g, mat({ color: 0xFBFAF7, roughness: .9 })); wm.castShadow = wm.receiveShadow = true; const ln = lines(g, 0x1B1C1E, .65); ln.material.userData.op = .65; ln.material.opacity = REDUCE ? .65 : 0; wm.add(ln); group.add(wm); parts.push({ riseAt: .25, o: wm, mt: wm.material, ln: ln.material }); }
+      if (walls.length || parti.length) { const g = merge([...walls, ...parti]), wm = new T.Mesh(g, mat({ color: PC.wall, roughness: .9 })); wm.castShadow = wm.receiveShadow = true; const ln = lines(g, PC.line, .65 * PC.lo); ln.material.userData.op = .65; ln.material.opacity = REDUCE ? .65 : 0; wm.add(ln); group.add(wm); parts.push({ riseAt: .25, o: wm, mt: wm.material, ln: ln.material }); }
       // wooden table tops
       const wood = (m.wood || []).map(p => ext(p, .74));
-      if (wood.length) { const g = merge(wood), wd = new T.Mesh(g, mat({ color: 0xB08A5A, roughness: .7 })); wd.castShadow = true; group.add(wd); parts.push({ riseAt: 1.1, o: wd, mt: wd.material }); }
+      if (wood.length) { const g = merge(wood), wd = new T.Mesh(g, mat({ color: PC.wood, roughness: .7 })); wd.castShadow = true; group.add(wd); parts.push({ riseAt: 1.1, o: wd, mt: wd.material }); }
       // desks, chairs and plants, each landing on its own, in a sweep along the floor
-      const desks = inst(box, mat({ color: 0xFFFFFF, roughness: .6 }), (m.desks || []).map(([u, v, a, b, ang]) => ({ u, v, sx: a - .06, sz: b - .06, sy: .74, a: ang * Math.PI / 180 })), 1.0, 1.4);
-      const seats = inst(cyl, mat({ color: 0x55534F, roughness: .8 }), (m.seats || []).map(([u, v, rr]) => ({ u, v, sx: Math.min(.32, rr), sz: Math.min(.32, rr), sy: .46 })), 1.2, 1.4);
-      const green = inst(ball, mat({ color: 0x7D9A6E, roughness: .9 }), (m.green || []).map(([u, v, rr]) => ({ u, v, y: .55, sx: Math.max(.25, rr), sz: Math.max(.25, rr), sy: Math.max(.3, rr) * 1.3 })), 1.5, 1.2);
+      const desks = inst(box, mat({ color: PC.desk, roughness: .6 }), (m.desks || []).map(([u, v, a, b, ang]) => ({ u, v, sx: a - .06, sz: b - .06, sy: .74, a: ang * Math.PI / 180 })), 1.0, 1.4);
+      const seats = inst(cyl, mat({ color: PC.seat, roughness: .8 }), (m.seats || []).map(([u, v, rr]) => ({ u, v, sx: Math.min(.32, rr), sz: Math.min(.32, rr), sy: .46 })), 1.2, 1.4);
+      const green = inst(ball, mat({ color: PC.green, roughness: .9 }), (m.green || []).map(([u, v, rr]) => ({ u, v, y: .55, sx: Math.max(.25, rr), sz: Math.max(.25, rr), sy: Math.max(.3, rr) * 1.3 })), 1.5, 1.2);
       [desks, seats, green].forEach(im => { if (im) im.material.userData.op = 1; });
       t0 = performance.now();
       const tick = now => {
@@ -3580,8 +3583,13 @@ function buildOffer() {
     const tgt = new T.Vector3(cu, 0, -cv);
     const place = (az, el) => { cam.position.set(tgt.x + 120 * Math.cos(el) * Math.sin(az), tgt.y + 120 * Math.sin(el), tgt.z + 120 * Math.cos(el) * Math.cos(az)); cam.lookAt(tgt); };
     const AZ = -.62; place(AZ, .62);
-    scene.add(new T.HemisphereLight(0xffffff, 0xd8d2c8, 1.35));
-    const sun = new T.DirectionalLight(0xffffff, 1.5); sun.position.set(cu - 30, 60, -cv + 40); sun.target.position.copy(tgt);
+    // the page may be dark: then the model is drawn in the dark tones of the page around it
+    const isDark = () => { const c = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim(); const m = c.match(/^#?([0-9a-f]{6})$/i); if (!m) return false; const n = parseInt(m[1], 16); return (((n >> 16) & 255) * .3 + ((n >> 8) & 255) * .59 + (n & 255) * .11) < 110; };
+    const DK = isDark();
+    const C = DK ? { slab: 0x2E2F32, line: 0xECEAE5, lo: .28, soft: 0x26272A, mix: .55, wall: 0x46474B, rug: 0x37383B, chair: 0x77726A, table: 0x5A554E, counter: 0x8C7656, plant: 0x5E7A55, hl: 0x8FB5AC, hemi: 1.05 }
+      : { slab: 0xF1EDE6, line: 0x1B1C1E, lo: 1, soft: 0xf6f4f0, mix: .35, wall: 0xFBFAF7, rug: 0xEFEAE1, chair: 0x8C877E, table: 0xE9E2D6, counter: 0xC9AE86, plant: 0x7D9A6E, hl: 0x41605A, hemi: 1.35 };
+    scene.add(new T.HemisphereLight(0xffffff, DK ? 0x55524d : 0xd8d2c8, C.hemi));
+    const sun = new T.DirectionalLight(0xffffff, DK ? 1.1 : 1.5); sun.position.set(cu - 30, 60, -cv + 40); sun.target.position.copy(tgt);
     sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -45, right: 45, top: 45, bottom: -45, near: 1, far: 200 }); sun.shadow.bias = -.0004; sun.shadow.radius = 3;
     scene.add(sun, sun.target);
     const ext = (pts, h) => { const g = new T.ExtrudeGeometry(new T.Shape(pts.map(([u, v]) => new T.Vector2(u, v))), { depth: h, bevelEnabled: false, curveSegments: 2 }); g.rotateX(-Math.PI / 2); return g; };
@@ -3590,28 +3598,28 @@ function buildOffer() {
     const all = [];
     // the floor
     const slabG = ext(D.geo.F2, .35); slabG.translate(0, -.35, 0);
-    const slab = new T.Mesh(slabG, new T.MeshStandardMaterial({ color: 0xF1EDE6, roughness: 1, metalness: 0 })); slab.receiveShadow = true; slab.add(lines(slabG, 0x1B1C1E, .55)); scene.add(slab);
+    const slab = new T.Mesh(slabG, new T.MeshStandardMaterial({ color: C.slab, roughness: 1, metalness: 0 })); slab.receiveShadow = true; slab.add(lines(slabG, C.line, .55 * C.lo)); scene.add(slab);
     // read straight from the vectors of the furnishing plan (data/mc3d.json): the floor zones in their colours, the walls,
     // the furniture and the plants, rising in a wave out from the meeting centre
     let M3 = {}; try { M3 = await (await fetch('data/mc3d.json')).json(); } catch (e) { }
-    const soft = new T.Color(0xf6f4f0);
+    const soft = new T.Color(C.soft);
     const paint = (g, col) => { const c = new T.Color(col), n = g.attributes.position.count, a = new Float32Array(n * 3); for (let k = 0; k < n; k++) { a[k * 3] = c.r; a[k * 3 + 1] = c.g; a[k * 3 + 2] = c.b; } g.setAttribute('color', new T.BufferAttribute(a, 3)); return g; };
     const area = P => Math.abs(P.reduce((s, q, i) => { const r0 = P[(i + P.length - 1) % P.length]; return s + r0[0] * q[1] - q[0] * r0[1]; }, 0)) / 2;
     const cen = P => P.reduce((s, q) => [s[0] + q[0] / P.length, s[1] + q[1] / P.length], [0, 0]);
     const band = P => { const [u, v] = cen(P); return Math.min(5, Math.floor(Math.hypot(u - 12, v - 18) / 8)); };
     const safe = (P, hgt, y = 0) => { try { const g = ext(P, hgt); if (y) g.translate(0, y, 0); return g; } catch (e) { return null; } };
-    const zones = (M3.zones || []).map(([P, c]) => { const g = safe(P, .03, .005); return g && paint(g, new T.Color(c).lerp(soft, .35)); }).filter(Boolean);
+    const zones = (M3.zones || []).map(([P, c]) => { const g = safe(P, .03, .005); return g && paint(g, new T.Color(c).lerp(soft, C.mix).multiplyScalar(DK ? .6 : 1)); }).filter(Boolean);
     if (zones.length) { const mat = new T.MeshStandardMaterial({ vertexColors: true, roughness: 1, transparent: true }); const o = new T.Mesh(merge(zones), mat); o.receiveShadow = true; scene.add(o); all.push({ o, mat, op: 1, at: .2, dur: .9 }); }
     const WB = [[], [], [], [], [], []]; (M3.walls || []).forEach(P => { const g = safe(P, 1.5); if (g) WB[band(P)].push(g); });
-    WB.forEach((gs, b) => { if (!gs.length) return; const g = merge(gs), mat = new T.MeshStandardMaterial({ color: 0xFBFAF7, roughness: .9, metalness: 0, transparent: true });
-      const o = new T.Mesh(g, mat); o.castShadow = o.receiveShadow = true; o.add(lines(g, 0x1B1C1E, .5)); scene.add(o); all.push({ o, mat, op: 1, at: .45 + b * .14, dur: 1 }); });
+    WB.forEach((gs, b) => { if (!gs.length) return; const g = merge(gs), mat = new T.MeshStandardMaterial({ color: C.wall, roughness: .9, metalness: 0, transparent: true });
+      const o = new T.Mesh(g, mat); o.castShadow = o.receiveShadow = true; o.add(lines(g, C.line, .5 * C.lo)); scene.add(o); all.push({ o, mat, op: 1, at: .45 + b * .14, dur: 1 }); });
     // white shapes by size: chairs, tables and sofas, counters
     const FB = [[], [], [], [], [], []];
-    (M3.rug || []).forEach(P => { const g = safe(P, .02, .03); if (g) FB[band(P)].push(paint(g, 0xEFEAE1)); });
-    (M3.chair || []).forEach(P => { const g = safe(P, .45); if (g) FB[band(P)].push(paint(g, 0x8C877E)); });
-    (M3.table || []).forEach(P => { const g = safe(P, .74); if (g) FB[band(P)].push(paint(g, 0xE9E2D6)); });
-    (M3.counter || []).forEach(P => { const g = safe(P, .95); if (g) FB[band(P)].push(paint(g, 0xC9AE86)); });
-    (M3.plant || []).forEach(P => { const g = safe(P, .9); if (g) FB[band(P)].push(paint(g, 0x7D9A6E)); });
+    (M3.rug || []).forEach(P => { const g = safe(P, .02, .03); if (g) FB[band(P)].push(paint(g, C.rug)); });
+    (M3.chair || []).forEach(P => { const g = safe(P, .45); if (g) FB[band(P)].push(paint(g, C.chair)); });
+    (M3.table || []).forEach(P => { const g = safe(P, .74); if (g) FB[band(P)].push(paint(g, C.table)); });
+    (M3.counter || []).forEach(P => { const g = safe(P, .95); if (g) FB[band(P)].push(paint(g, C.counter)); });
+    (M3.plant || []).forEach(P => { const g = safe(P, .9); if (g) FB[band(P)].push(paint(g, C.plant)); });
     FB.forEach((gs, b) => { if (!gs.length) return; const g = merge(gs), mat = new T.MeshStandardMaterial({ vertexColors: true, roughness: .75, metalness: 0, transparent: true });
       const o = new T.Mesh(g, mat); o.castShadow = true; o.receiveShadow = true; scene.add(o); all.push({ o, mat, op: 1, at: 1.4 + b * .12, dur: .8 }); });
 
@@ -3633,8 +3641,8 @@ function buildOffer() {
     // the rooms as light volumes that show when chosen or pointed at
     const MC = window.__mc || { rooms: [] }, hl = {};
     MC.rooms.forEach(rm => { if (!rm.poly) return; let g; try { g = ext(rm.poly, .9); } catch (e) { return; }
-      const mat = new T.MeshStandardMaterial({ color: 0x41605A, emissive: 0x2E4A44, emissiveIntensity: .35, transparent: true, opacity: 0, depthWrite: false, depthTest: false, roughness: .6 });
-      const o = new T.Mesh(g, mat); o.position.y = .02; o.renderOrder = 5; o.userData.room = rm.id; const ln = lines(g, 0x41605A, 0); o.add(ln); scene.add(o); hl[rm.id] = { o, mat, ln: ln.material, v: 0, to: 0 }; });
+      const mat = new T.MeshStandardMaterial({ color: C.hl, emissive: DK ? 0x3E5C55 : 0x2E4A44, emissiveIntensity: .35, transparent: true, opacity: 0, depthWrite: false, depthTest: false, roughness: .6 });
+      const o = new T.Mesh(g, mat); o.position.y = .02; o.renderOrder = 5; o.userData.room = rm.id; const ln = lines(g, C.hl, 0); o.add(ln); scene.add(o); hl[rm.id] = { o, mat, ln: ln.material, v: 0, to: 0 }; });
     const ray = new T.Raycaster(), ndc = new T.Vector2();
     let sel = null, hov = null, camT = null;
     const home = { t: tgt.clone(), z: 1 };
