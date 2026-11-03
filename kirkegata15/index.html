@@ -539,7 +539,7 @@ html.m .inb.in .ho-tile{opacity:1;transform:none}
 .offer button:hover .omore{transform:rotate(90deg);background:var(--paper)}
 /* the landlord's delivery: a rail of cards, each opens its materials */
 .lev{background:var(--paper);padding:var(--sec) 0}
-.lev-head{grid-column:1/8}
+
 .lev .lead2{margin:20px 0 0;font-size:var(--t-lead);line-height:1.5;color:var(--ink-2);max-width:48ch}
 .lev-monn{grid-column:9/13;align-self:end;background:var(--stone);border-radius:var(--r);padding:24px;display:grid;grid-template-columns:56px minmax(0,1fr);gap:20px;align-items:start}
 .lev-monn .m-arch{width:56px;height:auto;fill:var(--ink);display:block}
@@ -547,6 +547,29 @@ html.m .inb.in .ho-tile{opacity:1;transform:none}
 .lev-monn p{margin:0;font-size:16px;line-height:1.45;color:var(--ink-2)}
 .lev-monn .tl{margin-top:6px}
 /* the delivery as a specification: one row per area, the area and its materials on the left, element and finish on the right */
+/* the section drawing at the head of the delivery, and the line drawing in each area */
+svg.draw{display:block;width:100%;height:auto;color:var(--ink);overflow:visible}
+svg.draw *{vector-effect:non-scaling-stroke}
+.lev-head{grid-column:1/7;align-self:end}
+.lev-head .lev-monn{margin-top:clamp(24px,3vw,36px);max-width:460px}
+.lsnitt{grid-column:7/13;margin:0;align-self:end}
+.lsnitt svg [data-area]{transition:color .4s ease}
+.lsnitt svg [data-area].on,.lsnitt svg [data-area].hov{color:var(--patina)}
+.lsnitt .call{cursor:pointer;outline:none}
+.lsnitt .call:focus-visible .sn-l{text-decoration:underline}
+.lsnitt .sn-n{font-family:var(--f-display);font-size:14px;fill:currentColor;stroke:none}
+.lsnitt .sn-l{font-family:var(--f-body);font-size:11px;letter-spacing:.06em;text-transform:uppercase;fill:var(--ink-2);stroke:none}
+.lsnitt .call.on .sn-l,.lsnitt .call.hov .sn-l,.lsnitt .call:hover .sn-l{fill:var(--patina)}
+.lsnitt figcaption{margin-top:6px;font-size:var(--t-small);color:var(--ink-2)}
+.mleft{display:grid;gap:12px}
+.mill{margin:0;background:var(--stone);border-radius:var(--r);padding:clamp(20px,2.6vw,40px) clamp(20px,4vw,64px);display:grid;place-items:center}
+.mill svg.draw{width:100%;max-width:400px;height:auto}
+.mswatch{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.mswatch .mt{aspect-ratio:1/1}
+.mswatch .mt span{left:6px;bottom:6px;max-width:calc(100% - 12px);padding:4px 7px;font-size:11px}
+.mswatch .mt small{display:none}
+.mselfnote{margin:0;font-size:var(--t-small);color:var(--ink-2)}
+.mpanel.show .mill{animation:mtIn .7s var(--soft) both}
 .lspec{grid-column:1/-1;margin-top:clamp(40px,4.5vw,72px)}
 /* the areas as quiet numbered tabs on one line */
 .mtabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * var(--m));padding:2px var(--m) 4px}
@@ -591,7 +614,7 @@ html.m .inb.in .ho-tile{opacity:1;transform:none}
 @keyframes mtIn{from{opacity:0;transform:translateY(14px)}}
 @media (prefers-reduced-motion:reduce){.mpanel.show .mt,.mpanel.show .mself,.mpanel.show .mspec{animation:none}}
 .lev .src{grid-column:1/9;margin-top:18px;font-size:var(--t-small);color:var(--ink-2)}
-@media (max-width:900px){.lev-head,.lev-monn,.lev .src{grid-column:1/-1}.lev-monn{margin-top:24px}.mpanel{grid-template-columns:1fr}.mboard{grid-auto-rows:28vw}.mspec dl{grid-template-columns:minmax(0,1fr)}.mspec dt{padding-bottom:0;font-size:13px}.mspec dd{border-top:0;padding-top:2px}}
+@media (max-width:900px){.lev-head,.lev-monn,.lev .src,.lsnitt{grid-column:1/-1}.lsnitt{margin-top:28px}.mswatch{grid-template-columns:repeat(4,minmax(0,1fr))}.lev-monn{margin-top:24px}.mpanel{grid-template-columns:1fr}.mboard{grid-auto-rows:28vw}.mspec dl{grid-template-columns:minmax(0,1fr)}.mspec dt{padding-bottom:0;font-size:13px}.mspec dd{border-top:0;padding-top:2px}}
 
 .tag.plain{padding:5px 11px}
 .bkd{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
@@ -1126,11 +1149,12 @@ html.m .info.in .hp figcaption{opacity:1;transition:opacity 1s ease 1.2s}
     <div class="lev-head">
       <h2 class="h-sec" id="leTitle" data-split>Leveransebeskrivelse</h2>
       <p class="lead2 rise">Hver leietaker flytter inn i et lokale med en fast standard fra gårdeier. Eik, stein, tekstil og varme jordfarger går igjen fra kjøkkenet til toalettene, så hele huset henger sammen.</p>
+  <aside class="lev-monn rise" aria-label="Interiørarkitekt">
+        <svg class="m-arch" viewBox="0 0 274.12 267.75" aria-hidden="true"><path fill-rule="evenodd" d="M137.06 225.85 C88.10 225.85 48.27 186.02 48.27 137.06 C48.27 88.10 88.10 48.27 137.06 48.27 C186.02 48.27 225.85 88.10 225.85 137.06 C225.85 186.02 186.02 225.85 137.06 225.85 Z M137.06 0.00 C61.49 0.00 0.00 61.49 0.00 137.06 L0.00 267.75 L274.12 267.75 L274.12 137.06 C274.12 61.49 212.63 0.00 137.06 0.00Z"/></svg>
+        <div><svg class="m-word" viewBox="0 0 104.00 19.36" role="img" aria-label="Monn"><path d="M25.64 0.00 L25.64 0.00 C22.33 0.00 19.41 1.67 17.66 4.20 C15.91 1.67 12.99 0.00 9.68 0.00 C7.29 0.00 4.91 0.96 3.41 2.83 L3.41 0.47 L0.00 0.47 L0.00 18.91 L3.41 18.91 L3.41 9.68 C3.41 6.22 6.22 3.41 9.68 3.41 C13.14 3.41 15.96 6.22 15.96 9.68 L15.96 18.91 L15.96 18.91 L19.37 18.91 L19.37 18.91 L19.37 9.68 C19.37 6.22 22.18 3.41 25.64 3.41 C29.10 3.41 31.91 6.22 31.91 9.68 L31.91 18.91 L35.32 18.91 L35.32 9.68 C35.32 4.34 30.98 0.00 25.64 0.00Z M48.40 0.00 C43.07 0.00 38.72 4.34 38.72 9.68 C38.72 15.02 43.07 19.36 48.40 19.36 C53.74 19.36 58.09 15.02 58.09 9.68 C58.09 4.34 53.74 0.00 48.40 0.00 Z M48.40 15.96 C44.95 15.96 42.13 13.14 42.13 9.68 C42.13 6.22 44.95 3.41 48.40 3.41 C51.86 3.41 54.68 6.22 54.68 9.68 C54.68 13.14 51.86 15.96 48.40 15.96Z M80.82 9.68 C80.82 4.34 76.48 0.00 71.14 0.00 C68.75 0.00 66.36 0.96 64.86 2.83 L64.86 0.47 L61.45 0.47 L61.45 18.91 L64.86 18.91 L64.86 9.68 C64.86 6.22 67.68 3.41 71.14 3.41 C74.60 3.41 77.41 6.22 77.41 9.68 L77.41 18.91 L80.82 18.91 L80.82 9.68Z M104.00 9.68 C104.00 4.34 99.66 0.00 94.32 0.00 C91.92 0.00 89.54 0.96 88.04 2.83 L88.04 0.47 L84.63 0.47 L84.63 18.91 L88.04 18.91 L88.04 9.68 C88.04 6.22 90.86 3.41 94.32 3.41 C97.78 3.41 100.59 6.22 100.59 9.68 L100.59 18.91 L104.00 18.91 L104.00 9.68Z"/></svg><p>Materialene og standarden er valgt av Monn Interior Architects, interiørarkitekt for Kirkegata 15.</p><a class="tl" href="tilpasning.html">Tilpasning med Monn</a></div>
+      </aside>
     </div>
-    <aside class="lev-monn rise" aria-label="Interiørarkitekt">
-      <svg class="m-arch" viewBox="0 0 274.12 267.75" aria-hidden="true"><path fill-rule="evenodd" d="M137.06 225.85 C88.10 225.85 48.27 186.02 48.27 137.06 C48.27 88.10 88.10 48.27 137.06 48.27 C186.02 48.27 225.85 88.10 225.85 137.06 C225.85 186.02 186.02 225.85 137.06 225.85 Z M137.06 0.00 C61.49 0.00 0.00 61.49 0.00 137.06 L0.00 267.75 L274.12 267.75 L274.12 137.06 C274.12 61.49 212.63 0.00 137.06 0.00Z"/></svg>
-      <div><svg class="m-word" viewBox="0 0 104.00 19.36" role="img" aria-label="Monn"><path d="M25.64 0.00 L25.64 0.00 C22.33 0.00 19.41 1.67 17.66 4.20 C15.91 1.67 12.99 0.00 9.68 0.00 C7.29 0.00 4.91 0.96 3.41 2.83 L3.41 0.47 L0.00 0.47 L0.00 18.91 L3.41 18.91 L3.41 9.68 C3.41 6.22 6.22 3.41 9.68 3.41 C13.14 3.41 15.96 6.22 15.96 9.68 L15.96 18.91 L15.96 18.91 L19.37 18.91 L19.37 18.91 L19.37 9.68 C19.37 6.22 22.18 3.41 25.64 3.41 C29.10 3.41 31.91 6.22 31.91 9.68 L31.91 18.91 L35.32 18.91 L35.32 9.68 C35.32 4.34 30.98 0.00 25.64 0.00Z M48.40 0.00 C43.07 0.00 38.72 4.34 38.72 9.68 C38.72 15.02 43.07 19.36 48.40 19.36 C53.74 19.36 58.09 15.02 58.09 9.68 C58.09 4.34 53.74 0.00 48.40 0.00 Z M48.40 15.96 C44.95 15.96 42.13 13.14 42.13 9.68 C42.13 6.22 44.95 3.41 48.40 3.41 C51.86 3.41 54.68 6.22 54.68 9.68 C54.68 13.14 51.86 15.96 48.40 15.96Z M80.82 9.68 C80.82 4.34 76.48 0.00 71.14 0.00 C68.75 0.00 66.36 0.96 64.86 2.83 L64.86 0.47 L61.45 0.47 L61.45 18.91 L64.86 18.91 L64.86 9.68 C64.86 6.22 67.68 3.41 71.14 3.41 C74.60 3.41 77.41 6.22 77.41 9.68 L77.41 18.91 L80.82 18.91 L80.82 9.68Z M104.00 9.68 C104.00 4.34 99.66 0.00 94.32 0.00 C91.92 0.00 89.54 0.96 88.04 2.83 L88.04 0.47 L84.63 0.47 L84.63 18.91 L88.04 18.91 L88.04 9.68 C88.04 6.22 90.86 3.41 94.32 3.41 C97.78 3.41 100.59 6.22 100.59 9.68 L100.59 18.91 L104.00 18.91 L104.00 9.68Z"/></svg><p>Materialene og standarden er valgt av Monn Interior Architects, interiørarkitekt for Kirkegata 15.</p><a class="tl" href="tilpasning.html">Tilpasning med Monn</a></div>
-    </aside>
+    <figure class="lsnitt rise" aria-labelledby="snCap"><div id="levSnitt"></div><figcaption id="snCap">Snitt gjennom et kontor. Trykk på et nummer for å se området.</figcaption></figure>
     <div class="lspec" id="levSpec" aria-label="Spesifikasjon for leveransen"></div>
     <p class="src">Fra leveransebeskrivelsen for Kirkegata 15, Monn Interior Architects, 11.02.2025. «Eller lignende» betyr tilsvarende kvalitet. Fargene på skjermen er omtrentlige.</p>
   </div>
@@ -3845,6 +3869,20 @@ function buildOffer() {
    are the description's own; colours on screen are approximate. ---------- */
 (() => {
   const box = $('#levSpec'); if (!box) return;
+  // line drawings for each area, drawn stroke by stroke when the area opens (the same hand as the delivery sheets Monn draws)
+  const S = (inner, vb = '0 0 200 150') => `<svg class="draw" viewBox="${vb}" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+  const hatch = (x, y, w, h, step, dir) => { let d = ''; if (dir === 'h') { for (let yy = y + step; yy < y + h; yy += step) d += `M${x + 3} ${yy} h${w - 6} `; } else { for (let xx = x + step; xx < x + w; xx += step) d += `M${xx} ${y + 3} v${h - 6} `; } return `<path d="${d.trim()}"/>`; };
+  const ILL = {
+    apen: S(`<g data-step="0"><line x1="20" y1="22" x2="180" y2="22"/></g><g data-step="1"><rect x="36" y="38" width="128" height="26" rx="13"/><path d="M50 22 v16 M150 22 v16" stroke-width=".8"/><path d="M80 38 v26 M122 38 v26" stroke-width=".6"/></g><g data-step="2"><rect x="36" y="78" width="128" height="6"/><path d="M50 64 v14 M150 64 v14" stroke-width=".8"/><path d="M48 78 v6 M60 78 v6 M72 78 v6 M84 78 v6 M96 78 v6 M108 78 v6 M120 78 v6 M132 78 v6 M144 78 v6 M156 78 v6" stroke-width=".5"/></g>`),
+    maling: S(`<g data-step="0"><rect x="22" y="24" width="156" height="104"/></g><g data-step="1"><rect x="56" y="24" width="64" height="56" fill="currentColor" fill-opacity=".12" stroke="none"/></g><g data-step="2"><rect x="56" y="78" width="64" height="16" rx="3"/><path d="M62 78 v16 M114 78 v16" stroke-width=".6"/><path d="M120 86 h12 v14 h-10 v20" stroke-width="1.6"/><rect x="118" y="120" width="12" height="20" rx="3"/></g>`),
+    glass: S(`<g data-step="0"><rect x="20" y="22" width="160" height="6"/><rect x="20" y="122" width="160" height="6"/></g><g data-step="1" stroke-width=".8"><rect x="20" y="28" width="160" height="94"/><path d="M92 28 v94 M138 28 v94" stroke-dasharray="1.5 4"/></g><g data-step="2"><rect x="30" y="28" width="46" height="94" stroke-width="2.2"/><line x1="70" y1="76" x2="70" y2="90" stroke-width="2.2"/></g><g data-step="3" stroke-width=".5" opacity=".6"><path d="M108 44 l20 -10 M114 64 l24 -12 M152 80 l18 -9"/></g>`),
+    teppe: S(`<g data-step="0"><rect x="22" y="24" width="156" height="104"/></g><g data-step="1" stroke-width=".8"><path d="M74 24 v104 M126 24 v104 M22 76 h156"/></g><g data-step="2" stroke-width=".55">${hatch(22,24,52,52,5,'h')}${hatch(74,24,52,52,5,'v')}${hatch(126,24,52,52,5,'h')}${hatch(22,76,52,52,5,'v')}${hatch(74,76,52,52,5,'h')}${hatch(126,76,52,52,5,'v')}</g>`),
+    kjokken: S(`<g data-step="0"><line x1="12" y1="128" x2="188" y2="128"/></g><g data-step="1"><rect x="20" y="22" width="40" height="106"/><path d="M20 40 h40 M20 74 h40" stroke-width=".8"/><path d="M52 50 v16 M52 90 v16" stroke-width="2.2"/></g><g data-step="2"><rect x="60" y="88" width="124" height="40"/><line x1="60" y1="88" x2="184" y2="88" stroke-width="2.6"/><path d="M60 104 h124 M60 116 h124 M92 88 v40 M124 88 v40 M156 88 v40" stroke-width=".7"/><line x1="60" y1="124" x2="184" y2="124" stroke-dasharray="1.5 3" stroke-width=".7"/></g><g data-step="3"><rect x="66" y="50" width="80" height="4"/><path d="M60 78 h124" stroke-width=".7"/><line x1="100" y1="88" x2="124" y2="88" stroke-width="2.6"/><path d="M108 88 v-18 h16 v6" stroke-width="2"/></g>`),
+    oy: S(`<g data-step="0"><line x1="12" y1="128" x2="188" y2="128"/></g><g data-step="1"><rect x="30" y="80" width="140" height="48"/><line x1="30" y1="80" x2="170" y2="80" stroke-width="2.6"/><path d="M76 80 v48 M122 80 v48" stroke-width=".7"/><path d="M30 124 h140" stroke-dasharray="1.5 3" stroke-width=".7"/></g><g data-step="2"><rect x="36" y="86" width="34" height="36" stroke-width=".7"/><line x1="40" y1="96" x2="40" y2="112" stroke-width="2.2"/><path d="M82 92 h34" stroke-width=".7"/><path d="M122 100 h48 M122 114 h48" stroke-width=".7"/></g><g data-step="3"><rect x="40" y="42" width="100" height="4"/><path d="M124 80 v-14 h12 v5" stroke-width="2"/></g>`),
+    servant: S(`<g data-step="0"><line x1="48" y1="18" x2="48" y2="128"/><line x1="36" y1="128" x2="176" y2="128" stroke-width=".8"/></g><g data-step="1"><path d="M48 66 h108 v6 l-4 20 h-104 z"/><path d="M60 72 h92" stroke-width=".6"/></g><g data-step="2"><path d="M62 66 v-22 a6 6 0 0 1 6 -6 h14 a5 5 0 0 1 5 5 v4" stroke-width="2.6"/></g><g data-step="3"><path d="M100 92 v10 a7 7 0 0 1 -14 0 v-4 h-38" stroke-width="1.6"/></g>`),
+    gardin: S(`<g data-step="0"><line x1="20" y1="22" x2="180" y2="22"/><path d="M40 22 v8 M160 22 v8" stroke-width=".8"/><line x1="30" y1="30" x2="170" y2="30" stroke-width="2.4"/></g><g data-step="1"><path d="M38 32 c6 30 -6 60 0 96 M52 32 c-6 30 6 60 0 96 M66 32 c6 30 -6 60 0 96 M80 32 c-6 30 6 60 0 96"/><path d="M38 128 h42" stroke-width=".8"/></g><g data-step="2" stroke-width=".8"><rect x="100" y="32" width="70" height="96"/><path d="M100 70 h70 M100 76 h70" stroke-dasharray="2 3"/></g>`),
+  };
+
   const C = (hex, t, d) => ({ hex, t, d }), I = (src, t, d) => ({ src, t, d });
   const WASHED = C('#C9C3B6', 'Jotun Washed linen', 'Veggfarge, eksempel');
   const LEV = [
@@ -3883,20 +3921,38 @@ function buildOffer() {
   const ARCH = $('.lev-monn .m-arch')?.outerHTML || '';
   const tile = (s, k, i, n) => `<button type="button" class="mt t${i}" data-k="${k}" data-i="${i}" aria-haspopup="dialog" aria-label="${esc(s.t)}, se større" style="--d:${i * 70}ms">
     <i style="${s.src ? `background-image:url(img/${s.src}.webp)` : `background:${s.hex}`}"></i><span>${esc(s.t)}${s.d ? `<small>${esc(s.d)}</small>` : ''}</span></button>`;
-  const board = l => l.sw.length ? `<div class="mboard n${Math.min(l.sw.length, 5)}">${l.sw.slice(0, 5).map((s, i) => tile(s, l.k, i)).join('')}</div>`
-    : `<div class="mboard self"><div class="mself">${ARCH}<p>Gardiner og foliedesign på glass</p></div></div>`;
+  const AREA_ILL = { himling: 'apen', vegger: 'maling', glass: 'glass', gulv: 'teppe', tekjokken: 'kjokken', kjokken: 'oy', wc: 'servant', selv: 'gardin' };
+  const board = l => `<div class="mleft"><figure class="mill" aria-hidden="true">${ILL[AREA_ILL[l.k]] || ''}</figure>
+    ${l.sw.length ? `<div class="mswatch">${l.sw.slice(0, 5).map((s, i) => tile(s, l.k, i)).join('')}</div>` : `<p class="mselfnote">Gardiner og foliedesign på glass velges av leietaker.</p>`}</div>`;
   const panel = (l, n) => `${board(l)}<div class="mspec"><p class="no">${String(n + 1).padStart(2, '0')} av ${String(LEV.length).padStart(2, '0')}</p><h3>${l.t}</h3><p class="lead">${l.lead}</p>
     <dl>${l.spec.map(([d, v]) => `<dt>${d}</dt><dd>${v}</dd>`).join('')}</dl>
     <div class="mnav"><button type="button" data-step="-1" aria-label="Forrige område"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" data-step="1" aria-label="Neste område"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div></div>`;
   box.innerHTML = `<div class="mtabs" role="tablist" aria-label="Områdene i leveransen">${LEV.map((l, n) => `<button type="button" role="tab" id="lt-${l.k}" aria-controls="levPanel" aria-selected="${n === 0}" tabindex="${n ? -1 : 0}"><span>${String(n + 1).padStart(2, '0')}</span>${l.t}</button>`).join('')}</div>
     <div class="mpanel" id="levPanel" role="tabpanel" aria-labelledby="lt-${LEV[0].k}" tabindex="0"></div>`;
   const tabs = [...box.querySelectorAll('[role=tab]')], pn = $('#levPanel');
+  // drawing by stroke: every line starts hidden along its own length and is drawn in, group by group
+  const prepDraw = svg => {
+    if (REDUCE) return; const vb = svg.viewBox.baseVal, k = vb && vb.width ? (svg.getBoundingClientRect().width / vb.width) || 1 : 1; // strokes keep their screen width, so lengths are in screen pixels
+    svg.querySelectorAll('[data-step]').forEach(g => { const st = +g.dataset.step;
+      g.querySelectorAll('path,line,polyline,circle,rect,ellipse').forEach((el, i) => {
+        if (el.getAttribute('fill') === 'currentColor') { el.style.opacity = 0; el.style.transition = `opacity .6s ease ${st * .4 + .3}s`; el.dataset.fade = '1'; return; }
+        let len = 0; try { len = el.getTotalLength() * k + 2; } catch (e) { return; } if (len <= 2) return;
+        const dash = el.getAttribute('stroke-dasharray');
+        if (dash) { el.style.opacity = 0; el.dataset.fade = '1'; } else { el.style.strokeDasharray = len; el.style.strokeDashoffset = len; }
+        el.style.transition = `stroke-dashoffset ${Math.min(1.5, .45 + len / 420)}s cubic-bezier(.4,0,.2,1) ${st * .4 + Math.min(i * .035, .5)}s, opacity .6s ease ${st * .4 + .2}s`;
+      });
+      g.querySelectorAll('text').forEach(t => { t.style.opacity = 0; t.style.transition = `opacity .6s ease ${st * .4 + .5}s`; t.dataset.fade = '1'; }); });
+  };
+  const runDraw = svg => { if (REDUCE) return; requestAnimationFrame(() => requestAnimationFrame(() => svg.querySelectorAll('[data-step] *').forEach(el => { if (el.dataset.fade) el.style.opacity = 1; else if (el.style.strokeDashoffset) el.style.strokeDashoffset = 0; }))); };
+  let seen = false;
   let cur = -1;
   const go = (n, focus) => {
     n = (n + LEV.length) % LEV.length; if (n === cur) return; cur = n; const l = LEV[n];
     tabs.forEach((t, i) => { t.setAttribute('aria-selected', String(i === n)); t.tabIndex = i === n ? 0 : -1; });
     pn.setAttribute('aria-labelledby', `lt-${l.k}`);
     pn.classList.remove('show'); pn.innerHTML = panel(l, n); void pn.offsetWidth; pn.classList.add('show');
+    const dsvg = pn.querySelector('svg.draw'); if (dsvg) { prepDraw(dsvg); if (seen) runDraw(dsvg); }
+    window.__levSnitt?.(l.k);
     const t = tabs[n]; const bar = t.parentElement; if (bar.scrollWidth > bar.clientWidth) bar.scrollTo({ left: t.offsetLeft - 24, behavior: REDUCE ? 'auto' : 'smooth' });
     if (focus) t.focus();
     track('lev_area', { area: l.k });
@@ -3911,6 +3967,34 @@ function buildOffer() {
     track('sheet_open', { what: `lev_${l.k}_${b.dataset.i}` });
   });
   go(0);
+  // the section through an office at the head of the delivery: each numbered part opens its area below
+  const SN = $('#levSnitt');
+  if (SN) {
+    const call = (k, n, x, y1, y2, label, top) => `<g class="call" data-area="${k}" tabindex="0" role="button" aria-label="Åpne ${label.toLowerCase()}"><line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke-width=".8"/><text class="sn-n" x="${x - 6}" y="${top ? y2 - 8 : y2 + 20}">${n}</text><text class="sn-l" x="${x + 14}" y="${top ? y2 - 8 : y2 + 20}">${label}</text><rect x="${x - 10}" y="${top ? y2 - 26 : y2 + 2}" width="${label.length * 7.4 + 30}" height="26" fill="transparent" stroke="none"/></g>`;
+    SN.innerHTML = `<svg class="draw" viewBox="0 0 640 420" role="img" aria-label="Snitt gjennom et kontor med de sju områdene i leveransen markert" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+      <g data-step="0"><line x1="40" y1="330" x2="600" y2="330"/><line x1="40" y1="60" x2="600" y2="60"/><line x1="40" y1="60" x2="40" y2="330"/><line x1="600" y1="60" x2="600" y2="330"/></g>
+      <g data-step="1" data-area="gulv" stroke-width="1"><line x1="40" y1="340" x2="600" y2="340"/><path d="M100 330 v10 M160 330 v10 M220 330 v10 M280 330 v10 M340 330 v10 M420 330 v10 M480 330 v10 M540 330 v10"/><rect x="360" y="327" width="6" height="3" fill="currentColor" stroke="none"/></g>
+      <g data-step="2" data-area="himling"><path d="M60 74 h250 a7 7 0 0 1 0 14 h-250 a7 7 0 0 1 0 -14"/><path d="M110 60 v14 M250 60 v14" stroke-width=".8"/><path d="M380 60 v7 h46 v-7 M432 60 v7 h46 v-7 M484 60 v7 h46 v-7 M536 60 v7 h46 v-7" stroke-width="1"/></g>
+      <g data-step="3" data-area="glass"><rect x="360" y="96" width="4" height="234" fill="currentColor" stroke="none"/><line x1="364" y1="100" x2="600" y2="100"/><path d="M440 100 v226 M520 100 v226" stroke-dasharray="1.5 5"/><rect x="366" y="104" width="62" height="222" stroke-width="2"/><circle cx="422" cy="218" r="2.5"/><path d="M372 214 h50 M372 222 h50" stroke-dasharray="2 3" stroke-width=".7"/></g>
+      <g data-step="3" data-area="vegger"><rect x="176" y="120" width="170" height="150" fill="currentColor" fill-opacity=".06" stroke="none"/><path d="M176 120 h170" stroke-dasharray="2 4" stroke-width=".7"/><line x1="170" y1="324" x2="356" y2="324" stroke-width="2.2"/></g>
+      <g data-step="4" data-area="tekjokken"><rect x="56" y="272" width="104" height="58"/><line x1="56" y1="272" x2="160" y2="272" stroke-width="2.6"/><path d="M90 272 v58 M124 272 v58" stroke-width=".8"/><rect x="56" y="150" width="104" height="54"/><path d="M90 150 v54 M124 150 v54" stroke-width=".8"/><path d="M134 272 v-16 h14 v6" stroke-width="1.6"/></g>
+      <g data-step="5" data-area="kjokken"><rect x="196" y="282" width="140" height="48"/><line x1="192" y1="282" x2="340" y2="282" stroke-width="2.6"/><path d="M242 282 v48 M290 282 v48" stroke-width=".8"/><path d="M214 296 v34 M206 296 h16 M318 296 v34 M310 296 h16" stroke-width="1"/></g>
+      <g data-step="6" data-area="wc"><path d="M470 236 h60 v16 a8 8 0 0 1 -8 8 h-44 a8 8 0 0 1 -8 -8 z"/><path d="M500 236 v-12 h8" stroke-width="1.6"/><rect x="478" y="140" width="44" height="64" rx="4"/><path d="M546 270 h30 v20 a14 14 0 0 1 -14 14 h-16 z"/></g>
+      <g data-step="7">${call('himling', '01', 200, 74, 38, 'Himling', true)}${call('vegger', '02', 330, 120, 38, 'Vegger', true)}${call('glass', '03', 470, 100, 38, 'Glassfronter', true)}
+      ${call('tekjokken', '05', 100, 330, 372, 'Tekjøkken', false)}${call('kjokken', '06', 250, 330, 372, 'Kjøkken', false)}${call('gulv', '04', 400, 340, 372, 'Gulv', false)}${call('wc', '07', 510, 262, 372, 'Toaletter', false)}</g>
+    </svg>`;
+    const ssvg = SN.querySelector('svg'); prepDraw(ssvg);
+    const openArea = k => { const i = LEV.findIndex(x => x.k === k); if (i < 0) return; go(i); glide(box, { block: 'start' }); };
+    SN.addEventListener('click', e => { const c = e.target.closest('.call'); if (c) openArea(c.dataset.area); });
+    SN.addEventListener('keydown', e => { const c = e.target.closest('.call'); if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openArea(c.dataset.area); } });
+    SN.addEventListener('pointerover', e => { const c = e.target.closest('.call'); SN.querySelectorAll('[data-area]').forEach(g => g.classList.toggle('hov', !!c && g.dataset.area === c.dataset.area)); });
+    SN.addEventListener('pointerout', () => SN.querySelectorAll('.hov').forEach(g => g.classList.remove('hov')));
+    window.__levSnitt = k => SN.querySelectorAll('[data-area]').forEach(g => g.classList.toggle('on', g.dataset.area === k));
+    window.__levSnitt(LEV[0].k);
+    if ('IntersectionObserver' in window) { const io2 = new IntersectionObserver(es => { if (es[0].isIntersecting) { io2.disconnect(); runDraw(ssvg); } }, { threshold: .3 }); io2.observe(SN); } else runDraw(ssvg);
+  }
+  // the first area draws itself when the delivery comes into view
+  if ('IntersectionObserver' in window) { const io3 = new IntersectionObserver(es => { if (es[0].isIntersecting) { io3.disconnect(); seen = true; const s = pn.querySelector('svg.draw'); if (s) runDraw(s); } }, { threshold: .2 }); io3.observe(pn); } else seen = true;
 })();
 
 /* ---------- Boot: everything that does not need 3D first, then the model ---------- */
