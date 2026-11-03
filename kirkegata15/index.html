@@ -125,7 +125,8 @@ html.m .mast.in .mast-name .ch{transform:none}
 /* First screen: the answers first. The floors to let, how large, for how many and from when, on the stone ground */
 .info{position:relative;display:flex;align-items:center;padding:clamp(40px,6vh,72px) 0 clamp(40px,5vh,64px);background:var(--paper)}
 .info>.g{width:100%;align-items:end;row-gap:48px}
-.info-a{grid-column:1/7;align-self:start;margin-top:clamp(0px,4vw,56px)}
+.info-a{grid-column:1/7;align-self:start}
+.info-b{align-self:start}
 .info-b{grid-column:8/13}
 /* Pictures of the atrium in the first screen: each new one rises over the last and settles slowly */
 .hp{margin:0 0 clamp(28px,4vh,44px)}
@@ -156,7 +157,7 @@ html.m .mast.in .mast-name .ch{transform:none}
 .ho-t{font-family:var(--f-display);font-weight:300;font-size:var(--t-head);line-height:1.1;margin:0}
 .ho-head span{font-size:var(--t-small);color:var(--ink-2)}
 .ho-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.ho-tile{all:unset;box-sizing:border-box;position:relative;display:block;width:100%;aspect-ratio:4/3;overflow:hidden;border-radius:var(--r);background:var(--stone);cursor:pointer}
+.ho-tile{all:unset;box-sizing:border-box;position:relative;display:block;width:100%;aspect-ratio:5/6;overflow:hidden;border-radius:var(--r);background:var(--stone);cursor:pointer}
 .ho-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--soft)}
 .ho-tile:hover img{transform:scale(1.04)}
 .ho-tile:focus-visible{outline:2px solid var(--patina);outline-offset:3px}
@@ -700,9 +701,10 @@ html.m .fp:not(.drawn) .base-f{opacity:0}
 .spec th,.spec td{text-align:left;font-weight:400;vertical-align:baseline;padding:12px var(--gap) 12px 0;border-bottom:1px solid var(--rule)} /* taste-skill-ignore: rows of a real key and value table */
 .spec th{color:var(--ink-2);width:50%}
 /* Location: the walking map wide, a sandstone tile with the ways to get here */
-.info-a .locmap{margin-top:clamp(28px,4vh,44px);max-width:560px}
-.info-a .mapbar{margin-top:10px}
-.info-a .locmap+.acts{margin-top:clamp(24px,3vh,36px)}
+.info-a .locmap{margin-top:clamp(32px,4.5vh,48px)}
+.info-a .mapbar{margin-top:10px;font-size:13px;gap:6px 18px}
+.info-a .mapclock b{font-size:15px;font-weight:500;min-width:0}
+.info-a .mapclock span{font-size:13px}
 .loc .lead{grid-row:2}
 .loc .loctile{grid-column:9/13;grid-row:2;margin-top:24px}
 .loc{padding-block:var(--sec)}
@@ -843,7 +845,7 @@ html.m .fp:not(.drawn) .base-f{opacity:0}
 @media (max-width:1180px) and (min-width:901px){.mc3d{grid-column:1/8}.mcside{grid-column:8/-1;padding:20px}.mcfood li{grid-template-columns:minmax(0,1fr) auto}.mcfood svg{display:none}}
 @media (max-width:900px){
   .info{min-height:0;padding:36px 0 48px}
-  .info-a,.info-b{grid-column:1/-1}.info-a{margin-top:0}.info-b{margin-top:36px}
+  .info-a,.info-b{grid-column:1/-1}.info-a{margin-top:0}.info-b{margin-top:36px}.ho-tile{aspect-ratio:1/1}
   .hp-frame{height:56vw;min-height:200px}
   .h-hero{font-size:clamp(44px,12vw,64px)}
   .offer{grid-template-columns:1fr 1fr}
@@ -985,12 +987,13 @@ html.m .info.in .hp figcaption{opacity:1;transition:opacity 1s ease 1.2s}
         <div><dt>minutter å gå til Stortinget T</dt><dd>4</dd></div>
       </dl>
       <ul class="offer" id="offer" aria-label="Det bygget har"></ul>
+<div class="acts"><a class="btn shine" href="#kontakt" data-track="request_click">Be om visning</a><a class="btn stone" href="prospekt/kirkegata15-prospekt.pdf" download data-dl="Utleieprospekt">Last ned prospekt</a></div>
   <div class="locmap mini" id="locmap">
           <div class="mapbox" id="mapbox" role="img" aria-label="Kart over Kvadraturen med gangtid fra Kirkegata 15 til stasjoner og steder i nærheten. Alle stedene er listet ved siden av kartet."></div>
           <div class="mapbar" id="mapbar"><span class="leg"><i class="lr"></i>2 og 3 minutter å gå</span><span class="leg">Pek på et sted for å se veien dit</span><span class="leg"><i class="lw"></i>Gangvei til Oslo S</span></div>
           <ul class="sr" id="walk" aria-label="Steder og gangtid"></ul>
         </div>
-      <div class="acts"><a class="btn shine" href="#kontakt" data-track="request_click">Be om visning</a><a class="btn stone" href="prospekt/kirkegata15-prospekt.pdf" download data-dl="Utleieprospekt">Last ned prospekt</a></div>
+
     </div>
     <div class="info-b">
       <div class="inb" id="house">

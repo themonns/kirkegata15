@@ -34,10 +34,11 @@ body{background:var(--paper);color:var(--ink);font:400 16px/1.5 Switzer,system-u
 .list button:focus-visible{outline:2px solid var(--patina);outline-offset:2px}
 .list .more{margin:6px 0 0;font-size:13px;color:var(--ink-2);padding:8px 0}
 /* the marker: Monn's arch in patina, the building's name beside it */
-.pin{display:flex;align-items:center;gap:8px;cursor:pointer;transform:translateY(-4px)}
+.pin{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;cursor:pointer;transform:translateY(-4px)}
 .pin svg{width:26px;height:auto;fill:var(--patina);filter:drop-shadow(0 2px 4px rgba(27,28,30,.25));transition:transform .5s var(--soft)}
 .pin span{background:var(--paper);color:var(--ink);font:500 13px/1 Switzer,system-ui,sans-serif;padding:7px 10px;border-radius:3px;white-space:nowrap;box-shadow:0 2px 10px rgba(27,28,30,.12)} /* taste-skill-ignore: a label pinned on the map */
 .pin:hover svg,.pin.on svg{transform:scale(1.15)}
+.pin:focus-visible span{outline:2px solid var(--patina);outline-offset:2px}
 /* the card for a chosen building */
 .card{position:fixed;right:clamp(16px,2.4vw,32px);top:clamp(16px,2.4vw,32px);z-index:4;width:min(400px,calc(100vw - 32px));background:var(--paper);border-radius:var(--r);overflow:hidden;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .5s ease,transform .6s var(--soft)}
 .card.show{opacity:1;transform:none;pointer-events:auto}
