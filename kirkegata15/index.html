@@ -198,6 +198,7 @@ html.m .inb.in .ho-tile{opacity:1;transform:none}
 .atrium,.tech,.loc{background:var(--paper)}
 /* The model: a full stage, the floors as a lift at the side, the floor sheet as a card on the right */
 #modell{scroll-margin-top:-72px}
+#locmap{scroll-margin-top:96px}
 .stage{position:relative;height:100svh;min-height:640px;background:var(--clay);color:#1B1C1E;color-scheme:light;overflow:hidden}
 .view{position:absolute;inset:0;overflow:hidden}
 .canvaswrap{position:absolute;inset:0}
@@ -1007,13 +1008,13 @@ html.m .info.in .hp figcaption{opacity:1;transition:opacity 1s ease 1.2s}
 <header class="bar show" id="topbar">
   <div class="in">
     <a class="wm" href="#mast">Kirkegata 15</a>
-    <nav aria-label="Hovedmeny"><a href="#etasjer">Etasjer</a><a href="#modell">Modellen</a><a href="#atriet">Atriet</a><a href="#leveranse">Leveranse</a><a href="#beliggenhet">Beliggenhet</a><a href="leietakere.html">Leietakere</a><a href="tilpasning.html">Tilpasning</a><a href="eiendommer.html">Vika Eiendom</a></nav>
+    <nav aria-label="Hovedmeny"><a href="#etasjer">Etasjer</a><a href="#modell">Modellen</a><a href="#atriet">Atriet</a><a href="#leveranse">Leveranse</a><a href="#locmap">Beliggenhet</a><a href="leietakere.html">Leietakere</a><a href="tilpasning.html">Tilpasning</a><a href="eiendommer.html">Vika Eiendom</a></nav>
     <a class="btn small" href="#kontakt" data-track="request_click">Be om visning</a>
     <button class="menubtn" id="menuBtn" aria-expanded="false" aria-controls="menu" type="button">Meny</button>
   </div>
 </header>
 <div class="menu" id="menu" aria-hidden="true" inert data-lenis-prevent>
-  <nav aria-label="Meny"><a href="#etasjer">Etasjer</a><a href="#modell">Modellen</a><a href="#atriet">Atriet</a><a href="#leveranse">Leveranse</a><a href="#teknisk">Teknisk</a><a href="#beliggenhet">Beliggenhet</a><a href="leietakere.html">Leietakere</a><a href="tilpasning.html">Tilpasning med Monn</a><a href="eiendommer.html">Vika Eiendom</a></nav>
+  <nav aria-label="Meny"><a href="#etasjer">Etasjer</a><a href="#modell">Modellen</a><a href="#atriet">Atriet</a><a href="#leveranse">Leveranse</a><a href="#teknisk">Teknisk</a><a href="#locmap">Beliggenhet</a><a href="leietakere.html">Leietakere</a><a href="tilpasning.html">Tilpasning med Monn</a><a href="eiendommer.html">Vika Eiendom</a></nav>
   <a class="btn paper" href="#kontakt">Be om visning</a>
 </div>
 
@@ -1188,23 +1189,6 @@ html.m .info.in .hp figcaption{opacity:1;transition:opacity 1s ease 1.2s}
   </div>
 </section>
 
-<section class="loc" id="beliggenhet" aria-labelledby="loTitle">
-  <div class="g">
-    <h2 class="h-sec" id="loTitle" data-split>Hjørnet av Kirkegata og Tollbugata</h2>
-    <p class="lead rise">Midt i Kvadraturen, mellom Karl Johans gate og Akershus festning. Bussen stopper ett minutt unna og trikken tre. Stortinget T ligger fire minutter unna og Oslo S ni.</p>
-    <aside class="loctile rise" aria-label="Kollektivt og i huset">
-      <h3>Kollektivt</h3>
-      <ul class="modes" id="modes"></ul>
-      <div class="house">
-        <p><b>Servering</b> og forretninger i gateplan.</p>
-        <p><b>Parkering</b> i kjeller og 1. etasje. Antall plasser og vilkår avklares med utleier.</p>
-        <button class="tl" type="button" id="askPark">Spør utleier om parkering</button>
-      </div>
-      <p class="note">Gangtid er beregnet fra luftlinje ganger 1,25 i 80 meter i minuttet. Kartdata © OpenStreetMap-bidragsytere.</p>
-    </aside>
-  </div>
-</section>
-
 <section class="visit" id="kontakt" aria-labelledby="viTitle">
   <div class="visit-bg" id="visitBg">
     <img class="on" src="img/v-kjokken.webp" alt="Sosial sone med kjøkken i eik, barbord og sofagruppe på et mønstret teppe" loading="lazy" decoding="async" width="1999" height="1333">
@@ -1244,7 +1228,7 @@ html.m .info.in .hp figcaption{opacity:1;transition:opacity 1s ease 1.2s}
   </div>
   <p class="end-name" id="endName" aria-hidden="true"><span>Kirkegata 15</span></p>
   <div class="end-meta">
-    <nav aria-label="Bunnmeny"><a href="#etasjer">Etasjer</a><a href="#modell">Modellen</a><a href="#atriet">Atriet</a><a href="#leveranse">Leveranse</a><a href="#teknisk">Teknisk</a><a href="#beliggenhet">Beliggenhet</a><a href="#kontakt">Be om visning</a></nav>
+    <nav aria-label="Bunnmeny"><a href="#etasjer">Etasjer</a><a href="#modell">Modellen</a><a href="#atriet">Atriet</a><a href="#leveranse">Leveranse</a><a href="#teknisk">Teknisk</a><a href="#locmap">Beliggenhet</a><a href="#kontakt">Be om visning</a></nav>
     <span class="r">Planforslagene er illustrasjoner av mulige løsninger. Kartdata © OpenStreetMap-bidragsytere.</span>
   </div>
 </footer>
@@ -3144,7 +3128,7 @@ function buildMap() {
     li.addEventListener('click', () => { const was = kept; items.forEach(x => x.drop()); kept = !was; on(kept); });
     li.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.click(); } });
     li.addEventListener('focus', () => on(true)); li.addEventListener('blur', () => { if (!kept) on(false); });
-    modesEl.appendChild(li); items.push({ li, at: T(Math.min(...ps.map(([n]) => lm[n].min))), drop: () => { kept = false; on(false); } });
+    modesEl?.appendChild(li); items.push({ li, at: T(Math.min(...ps.map(([n]) => lm[n].min))), drop: () => { kept = false; on(false); } });
   });
   // clock and replay
   const clock = document.createElement('div'); clock.className = 'mapclock'; clock.setAttribute('aria-hidden', 'true');
