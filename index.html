@@ -2,27 +2,144 @@
 <html lang="nb">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Monn</title>
-<meta name="description" content="Monn Interior Architects">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Monn eiendommer</title>
+<meta name="description" content="Eiendommer Monn Interior Architects arbeider med. Velg et bygg på kartet for å se mer.">
 <link rel="preload" href="kirkegata15/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="kirkegata15/fonts/NyghtSerif-Light.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <style>
 @font-face{font-family:Switzer;src:url(kirkegata15/fonts/Switzer-Variable.woff2) format("woff2");font-weight:100 900;font-display:swap}
-:root{--paper:#F2F1EE;--ink:#1B1C1E;--ink-2:#5F5B55;--rule:#D9D6D0}
-@media (prefers-color-scheme:dark){:root{--paper:#1E1F21;--ink:#ECEAE5;--ink-2:#B4B1AB;--rule:#35363A}}
+@font-face{font-family:"Nyght Serif";src:url(kirkegata15/fonts/NyghtSerif-Light.woff2) format("woff2");font-weight:300;font-display:swap}
+:root{--paper:#F2F1EE;--stone:#E6E4DF;--stone-2:#DAD7D1;--ink:#1B1C1E;--ink-2:#5F5B55;--rule:#D9D6D0;--patina:#41605A;--on-patina:#F2F1EE;--r:4px;--soft:cubic-bezier(.22,1,.36,1);color-scheme:light}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
-body{background:var(--paper);color:var(--ink);font:400 16px/1.5 Switzer,system-ui,sans-serif;display:flex;flex-direction:column;justify-content:space-between;min-height:100svh;padding:clamp(24px,4vw,56px)}
-.arch{width:clamp(72px,9vw,120px);height:auto;fill:var(--ink);display:block}
-.word{width:clamp(90px,10vw,140px);height:auto;fill:var(--ink);display:block;margin-top:28px}
-nav{border-top:1px solid var(--rule);padding-top:20px;display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
-nav a{color:var(--ink);text-decoration:none;font-size:20px}
-nav a:hover,nav a:focus-visible{text-decoration:underline;text-underline-offset:4px}
-nav span{color:var(--ink-2);font-size:14px}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.5 Switzer,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+#map{position:fixed;inset:0;background:var(--stone)}
+/* the header and the list float over the map as quiet paper panels */
+.top{position:fixed;left:clamp(16px,2.4vw,32px);top:clamp(16px,2.4vw,32px);z-index:3;display:flex;align-items:flex-end;gap:14px;background:var(--paper);padding:14px 18px 14px 16px;border-radius:var(--r)}
+.top .arch{width:34px;height:auto;fill:var(--ink);display:block}
+.top .word{width:62px;height:auto;fill:var(--ink);display:block;margin-bottom:2px}
+.list{position:fixed;left:clamp(16px,2.4vw,32px);bottom:clamp(16px,2.4vw,32px);z-index:3;width:min(380px,calc(100vw - 32px));background:var(--paper);border-radius:var(--r);padding:20px 20px 10px}
+.list h1{font-family:"Nyght Serif",Georgia,serif;font-weight:300;font-size:clamp(30px,3vw,42px);line-height:1.02;letter-spacing:-.01em;margin:0}
+.list p.sub{margin:8px 0 14px;color:var(--ink-2);font-size:15px}
+.list ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.list li+li{border-top:1px solid var(--rule)}
+.list button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 0;cursor:pointer}
+.list button img{width:56px;height:56px;object-fit:cover;border-radius:3px;display:block;background:var(--stone)}
+.list b{display:block;font-weight:500;font-size:16px}
+.list small{display:block;color:var(--ink-2);font-size:13px}
+.list .go{font-size:13px;color:var(--ink-2);transition:transform .4s var(--soft)}
+.list button:hover .go,.list button[aria-current="true"] .go{transform:translateX(3px);color:var(--ink)}
+.list button:focus-visible{outline:2px solid var(--patina);outline-offset:2px}
+.list .more{margin:6px 0 0;font-size:13px;color:var(--ink-2);padding:8px 0}
+/* the marker: Monn's arch in patina, the building's name beside it */
+.pin{display:flex;align-items:center;gap:8px;cursor:pointer;transform:translateY(-4px)}
+.pin svg{width:26px;height:auto;fill:var(--patina);filter:drop-shadow(0 2px 4px rgba(27,28,30,.25));transition:transform .5s var(--soft)}
+.pin span{background:var(--paper);color:var(--ink);font:500 13px/1 Switzer,system-ui,sans-serif;padding:7px 10px;border-radius:3px;white-space:nowrap;box-shadow:0 2px 10px rgba(27,28,30,.12)} /* taste-skill-ignore: a label pinned on the map */
+.pin:hover svg,.pin.on svg{transform:scale(1.15)}
+/* the card for a chosen building */
+.card{position:fixed;right:clamp(16px,2.4vw,32px);top:clamp(16px,2.4vw,32px);z-index:4;width:min(400px,calc(100vw - 32px));background:var(--paper);border-radius:var(--r);overflow:hidden;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .5s ease,transform .6s var(--soft)}
+.card.show{opacity:1;transform:none;pointer-events:auto}
+.card figure{margin:0;aspect-ratio:16/10;background:var(--stone)}
+.card figure img{width:100%;height:100%;object-fit:cover;display:block}
+.card .in{padding:20px 22px 22px}
+.card h2{font-family:"Nyght Serif",Georgia,serif;font-weight:300;font-size:clamp(30px,3vw,40px);line-height:1.02;margin:0}
+.card .area{margin:6px 0 0;color:var(--ink-2);font-size:15px}
+.card dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 0}
+.card dl div{border-top:1px solid var(--rule);padding-top:10px}
+.card dd{margin:0;font-family:"Nyght Serif",Georgia,serif;font-weight:300;font-size:26px;line-height:1}
+.card dt{font-size:12px;color:var(--ink-2);margin-top:4px}
+.card .acts{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px}
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:12px 22px;border-radius:999px;background:var(--patina);color:var(--on-patina);text-decoration:none;font-weight:500;font-size:15px}
+.btn:focus-visible,.x:focus-visible{outline:2px solid var(--patina);outline-offset:3px}
+.x{all:unset;cursor:pointer;font-size:14px;color:var(--ink-2);padding:8px 0}
+.x:hover{color:var(--ink)}
+.maplibregl-ctrl-attrib{font:11px/1.4 Switzer,system-ui,sans-serif!important;background:rgba(242,241,238,.85)!important}
+@media (max-width:700px){
+  .card{left:16px;right:16px;top:auto;bottom:16px;width:auto}
+  .card figure{aspect-ratio:16/8}
+  .list{bottom:16px}
+  .card.show~.list{opacity:0;pointer-events:none}
+}
+@media (prefers-reduced-motion:reduce){.card,.pin svg,.list .go{transition:none}}
 </style>
 </head>
 <body>
-<header><svg class="arch" viewBox="0 0 274.12 267.75" aria-hidden="true"><path fill-rule="evenodd" d="M137.06 225.85 C88.10 225.85 48.27 186.02 48.27 137.06 C48.27 88.10 88.10 48.27 137.06 48.27 C186.02 48.27 225.85 88.10 225.85 137.06 C225.85 186.02 186.02 225.85 137.06 225.85 Z M137.06 0.00 C61.49 0.00 0.00 61.49 0.00 137.06 L0.00 267.75 L274.12 267.75 L274.12 137.06 C274.12 61.49 212.63 0.00 137.06 0.00Z"/></svg><svg class="word" viewBox="0 0 104.00 19.36" role="img" aria-label="Monn"><path d="M25.64 0.00 L25.64 0.00 C22.33 0.00 19.41 1.67 17.66 4.20 C15.91 1.67 12.99 0.00 9.68 0.00 C7.29 0.00 4.91 0.96 3.41 2.83 L3.41 0.47 L0.00 0.47 L0.00 18.91 L3.41 18.91 L3.41 9.68 C3.41 6.22 6.22 3.41 9.68 3.41 C13.14 3.41 15.96 6.22 15.96 9.68 L15.96 18.91 L15.96 18.91 L19.37 18.91 L19.37 18.91 L19.37 9.68 C19.37 6.22 22.18 3.41 25.64 3.41 C29.10 3.41 31.91 6.22 31.91 9.68 L31.91 18.91 L35.32 18.91 L35.32 9.68 C35.32 4.34 30.98 0.00 25.64 0.00Z M48.40 0.00 C43.07 0.00 38.72 4.34 38.72 9.68 C38.72 15.02 43.07 19.36 48.40 19.36 C53.74 19.36 58.09 15.02 58.09 9.68 C58.09 4.34 53.74 0.00 48.40 0.00 Z M48.40 15.96 C44.95 15.96 42.13 13.14 42.13 9.68 C42.13 6.22 44.95 3.41 48.40 3.41 C51.86 3.41 54.68 6.22 54.68 9.68 C54.68 13.14 51.86 15.96 48.40 15.96Z M80.82 9.68 C80.82 4.34 76.48 0.00 71.14 0.00 C68.75 0.00 66.36 0.96 64.86 2.83 L64.86 0.47 L61.45 0.47 L61.45 18.91 L64.86 18.91 L64.86 9.68 C64.86 6.22 67.68 3.41 71.14 3.41 C74.60 3.41 77.41 6.22 77.41 9.68 L77.41 18.91 L80.82 18.91 L80.82 9.68Z M104.00 9.68 C104.00 4.34 99.66 0.00 94.32 0.00 C91.92 0.00 89.54 0.96 88.04 2.83 L88.04 0.47 L84.63 0.47 L84.63 18.91 L88.04 18.91 L88.04 9.68 C88.04 6.22 90.86 3.41 94.32 3.41 C97.78 3.41 100.59 6.22 100.59 9.68 L100.59 18.91 L104.00 18.91 L104.00 9.68Z"/></svg></header>
-<nav aria-label="Prosjekter"><a href="kirkegata15/">Kirkegata 15</a><span>Value the inside</span></nav>
+<header class="top" aria-label="Monn">
+  <svg class="arch" viewBox="0 0 274.12 267.75" aria-hidden="true"><path fill-rule="evenodd" d="M137.06 225.85 C88.10 225.85 48.27 186.02 48.27 137.06 C48.27 88.10 88.10 48.27 137.06 48.27 C186.02 48.27 225.85 88.10 225.85 137.06 C225.85 186.02 186.02 225.85 137.06 225.85 Z M137.06 0.00 C61.49 0.00 0.00 61.49 0.00 137.06 L0.00 267.75 L274.12 267.75 L274.12 137.06 C274.12 61.49 212.63 0.00 137.06 0.00Z"/></svg>
+  <svg class="word" viewBox="0 0 104.00 19.36" role="img" aria-label="Monn"><path d="M25.64 0.00 L25.64 0.00 C22.33 0.00 19.41 1.67 17.66 4.20 C15.91 1.67 12.99 0.00 9.68 0.00 C7.29 0.00 4.91 0.96 3.41 2.83 L3.41 0.47 L0.00 0.47 L0.00 18.91 L3.41 18.91 L3.41 9.68 C3.41 6.22 6.22 3.41 9.68 3.41 C13.14 3.41 15.96 6.22 15.96 9.68 L15.96 18.91 L15.96 18.91 L19.37 18.91 L19.37 18.91 L19.37 9.68 C19.37 6.22 22.18 3.41 25.64 3.41 C29.10 3.41 31.91 6.22 31.91 9.68 L31.91 18.91 L35.32 18.91 L35.32 9.68 C35.32 4.34 30.98 0.00 25.64 0.00Z M48.40 0.00 C43.07 0.00 38.72 4.34 38.72 9.68 C38.72 15.02 43.07 19.36 48.40 19.36 C53.74 19.36 58.09 15.02 58.09 9.68 C58.09 4.34 53.74 0.00 48.40 0.00 Z M48.40 15.96 C44.95 15.96 42.13 13.14 42.13 9.68 C42.13 6.22 44.95 3.41 48.40 3.41 C51.86 3.41 54.68 6.22 54.68 9.68 C54.68 13.14 51.86 15.96 48.40 15.96Z M80.82 9.68 C80.82 4.34 76.48 0.00 71.14 0.00 C68.75 0.00 66.36 0.96 64.86 2.83 L64.86 0.47 L61.45 0.47 L61.45 18.91 L64.86 18.91 L64.86 9.68 C64.86 6.22 67.68 3.41 71.14 3.41 C74.60 3.41 77.41 6.22 77.41 9.68 L77.41 18.91 L80.82 18.91 L80.82 9.68Z M104.00 9.68 C104.00 4.34 99.66 0.00 94.32 0.00 C91.92 0.00 89.54 0.96 88.04 2.83 L88.04 0.47 L84.63 0.47 L84.63 18.91 L88.04 18.91 L88.04 9.68 C88.04 6.22 90.86 3.41 94.32 3.41 C97.78 3.41 100.59 6.22 100.59 9.68 L100.59 18.91 L104.00 18.91 L104.00 9.68Z"/></svg>
+</header>
+
+<div id="map" role="region" aria-label="Kart over Oslo med byggene"></div>
+
+<aside class="card" id="card" aria-live="polite"></aside>
+
+<nav class="list" aria-labelledby="lsT">
+  <h1 id="lsT">Eiendommer</h1>
+  <p class="sub">Velg et bygg på kartet eller i listen.</p>
+  <ul id="ls"></ul>
+</nav>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+// The buildings. To add one, add a line here and put its site in a folder of its own.
+const BUILDINGS = [
+  { id: 'kirkegata15', name: 'Kirkegata 15', area: 'Kvadraturen, Oslo', href: 'kirkegata15/', img: 'kirkegata15/img/hero-broer.webp',
+    lng: 10.74333, lat: 59.91028, nums: [['15 845', 'm² leieareal'], ['8', 'etasjer rundt atriet'], ['4 min', 'til Stortinget T']] },
+];
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const ARCH = document.querySelector('.top .arch').outerHTML.replace('class="arch"', '');
+const card = document.getElementById('card'), ls = document.getElementById('ls');
+let map = null, pins = {};
+
+ls.innerHTML = BUILDINGS.map(b => `<li><button type="button" data-id="${b.id}"><img src="${b.img}" alt=""><span><b>${esc(b.name)}</b><small>${esc(b.area)}</small></span><span class="go" aria-hidden="true">Se</span></button></li>`).join('');
+
+function open(id) {
+  const b = BUILDINGS.find(x => x.id === id); if (!b) return;
+  card.innerHTML = `<figure><img src="${b.img}" alt=""></figure><div class="in"><h2>${esc(b.name)}</h2><p class="area">${esc(b.area)}</p>
+    <dl>${b.nums.map(([v, t]) => `<div><dd>${esc(v)}</dd><dt>${esc(t)}</dt></div>`).join('')}</dl>
+    <div class="acts"><a class="btn" href="${b.href}">Se ${esc(b.name)}</a><button class="x" type="button" id="cardX">Lukk</button></div></div>`;
+  card.classList.add('show');
+  ls.querySelectorAll('button').forEach(x => x.setAttribute('aria-current', String(x.dataset.id === id)));
+  Object.entries(pins).forEach(([k, el]) => el.classList.toggle('on', k === id));
+  if (map) map.flyTo({ center: [b.lng, b.lat], zoom: 16.2, pitch: 50, bearing: -20, offset: innerWidth > 700 ? [-120, 0] : [0, -120], duration: REDUCE ? 0 : 2200, essential: true });
+  document.getElementById('cardX').addEventListener('click', close);
+}
+function close() {
+  card.classList.remove('show');
+  Object.values(pins).forEach(el => el.classList.remove('on'));
+  ls.querySelectorAll('button').forEach(x => x.setAttribute('aria-current', 'false'));
+  if (map) map.flyTo({ center: [10.7461, 59.9127], zoom: 13.2, pitch: 0, bearing: 0, duration: REDUCE ? 0 : 1600 });
+}
+ls.addEventListener('click', e => { const b = e.target.closest('[data-id]'); if (b) open(b.dataset.id); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && card.classList.contains('show')) close(); });
+
+// the map: a quiet, light Oslo with the buildings as arches. Without the map the list still opens the buildings.
+try {
+  map = new maplibregl.Map({ container: 'map', style: 'https://tiles.openfreemap.org/styles/positron', center: [10.7461, 59.9127], zoom: 12.4, attributionControl: { compact: true } });
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+  map.scrollZoom.setWheelZoomRate(1 / 600);
+  BUILDINGS.forEach(b => {
+    const el = document.createElement('button');
+    el.type = 'button'; el.className = 'pin'; el.setAttribute('aria-label', `Åpne ${b.name}`);
+    el.innerHTML = `${ARCH}<span>${esc(b.name)}</span>`;
+    el.addEventListener('click', () => open(b.id));
+    pins[b.id] = el;
+    new maplibregl.Marker({ element: el, anchor: 'left' }).setLngLat([b.lng, b.lat]).addTo(map);
+  });
+  map.on('load', () => {
+    // muted to Monn's paper and stone
+    const set = (layer, prop, val) => { try { map.setPaintProperty(layer, prop, val); } catch (e) {} };
+    map.getStyle().layers.forEach(l => {
+      if (l.type === 'background') set(l.id, 'background-color', '#ECEAE5');
+      if (l.type === 'fill' && /water/.test(l.id)) set(l.id, 'fill-color', '#D5DCD8');
+      if (l.type === 'fill' && /park|landcover|grass|wood/.test(l.id)) set(l.id, 'fill-color', '#E1E3DA');
+    });
+    if (!REDUCE) map.flyTo({ center: [10.7461, 59.9127], zoom: 13.2, duration: 2400 });
+  });
+} catch (e) { document.getElementById('map').style.background = 'var(--stone)'; }
+</script>
 </body>
 </html>
